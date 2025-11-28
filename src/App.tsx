@@ -42,9 +42,28 @@ function App() {
   const [heatingScoreMin, setHeatingScoreMin] = useState<number | null>(null);
   const [heatingScoreMax, setHeatingScoreMax] = useState<number | null>(null);
   const [styleSet, setStyleSet] = useState<StyleSetType>("A");
-  const [genusData, setGenusData] = useState<GenusAttractionData>(
-    createEmptyGenusData(GENUS_OPTIONS[0])
-  );
+  const [genusDataMap, setGenusDataMap] = useState<Map<string, GenusAttractionData>>(() => {
+    const initialMap = new Map<string, GenusAttractionData>();
+    GENUS_OPTIONS.forEach(g => {
+      initialMap.set(g, createEmptyGenusData(g));
+    });
+    return initialMap;
+  });
+
+  // Helper to get current genus data
+  const genusData = genusDataMap.get(genus) || createEmptyGenusData(genus);
+
+  // Helper to update current genus data in the map
+  const updateGenusData = useCallback((updater: GenusAttractionData | ((prev: GenusAttractionData) => GenusAttractionData)) => {
+    setGenusDataMap(prevMap => {
+      const newMap = new Map(prevMap);
+      const currentData = newMap.get(genus) || createEmptyGenusData(genus);
+      const newData = typeof updater === 'function' ? updater(currentData) : updater;
+      newMap.set(genus, newData);
+      return newMap;
+    });
+  }, [genus]);
+
   const [selectedCoord, setSelectedCoord] = useState<Coordinate | null>(null);
   const [currentScore, setCurrentScore] = useState<number>(0);
   const [currentNote, setCurrentNote] = useState<string>("");
@@ -197,13 +216,13 @@ function App() {
       // Recommend styles using normalized coordinates
       const recommended = recommendStyles(
         normCoord,
-        normalizedStyles,
+        filteredStyles,
         styleSet,
         5
       );
       setRankGroups(recommended);
     },
-    [genusData.style_sets, styleSet, rankMap, normalizedStyles]
+    [genusData.style_sets, styleSet, rankMap, filteredStyles]
   );
 
   // 점수 저장
@@ -244,7 +263,7 @@ function App() {
 
     newData.style_sets[styleSet].heatingScoreMin = heatingScoreMin;
     newData.style_sets[styleSet].heatingScoreMax = heatingScoreMax;
-    setGenusData(newData);
+    updateGenusData(newData);
   }, [
     selectedCoord,
     selectedPointIndex,
@@ -360,7 +379,7 @@ function App() {
     if (confirm("정말 삭제하시겠습니까?")) {
       const newData = { ...genusData };
       deletePoint(newData, styleSet, selectedCoord);
-      setGenusData(newData);
+      updateGenusData(newData);
 
       // 선택 초기화
       setSelectedCoord(null);
@@ -401,7 +420,7 @@ function App() {
           // User request: Keep current genus, do not switch to file's genus
           data.genus = genus;
 
-          setGenusData(data);
+          updateGenusData(data);
           // setGenus(data.genus); // Removed to prevent genus switching
 
           setHeatingScoreMin(data.style_sets[targetStyleSet].heatingScoreMin ?? null);
@@ -545,14 +564,9 @@ function App() {
               onChange={(e) => {
                 const newGenus = e.target.value;
                 setGenus(newGenus);
-                // Reset data when genus is manually changed
-                setGenusData(createEmptyGenusData(newGenus));
-                setSelectedCoord(null);
-                setSelectedNormCoord(null);
-                setSelectedPointIndex(null);
-                setRankGroups([]);
-                setHeatingScoreMin(null);
-                setHeatingScoreMax(null);
+                // Update genus in genusData without resetting points
+                const updatedData = { ...genusData, genus: newGenus };
+                updateGenusData(updatedData);
               }}
               className="control-select"
             >
@@ -571,7 +585,7 @@ function App() {
               onChange={(e) => {
                 const val = e.target.value === '' ? null : parseInt(e.target.value, 10);
                 setHeatingScoreMin(val);
-                setGenusData(prev => ({
+                updateGenusData(prev => ({
                   ...prev,
                   style_sets: {
                     ...prev.style_sets,
@@ -594,7 +608,7 @@ function App() {
               onChange={(e) => {
                 const val = e.target.value === '' ? null : parseInt(e.target.value, 10);
                 setHeatingScoreMax(val);
-                setGenusData(prev => ({
+                updateGenusData(prev => ({
                   ...prev,
                   style_sets: {
                     ...prev.style_sets,
@@ -795,7 +809,7 @@ function App() {
                   if (selectedPointIndex !== null && genusData.style_sets[styleSet].points[selectedPointIndex]) {
                     const newData = { ...genusData };
                     newData.style_sets[styleSet].points[selectedPointIndex].note = note;
-                    setGenusData(newData);
+                    updateGenusData(newData);
                   }
                 }}
                 onSave={handleSaveScore}
