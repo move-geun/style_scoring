@@ -278,22 +278,12 @@ function App() {
 
   // 스타일 선택 토글
 
-  // 저장
   const handleSave = useCallback(() => {
-    console.log("=== handleSave 시작 ===");
-    console.log("현재 styleSet:", styleSet);
-    console.log("rankMap 존재:", !!rankMap);
-    console.log("저장 전 genusData:", {
-      genus: genusData.genus,
-      A_points: genusData.style_sets.A.points.length,
-      B_points: genusData.style_sets.B.points.length,
-    });
 
     if (!rankMap) {
       console.warn("RankMap not available, saving without normCoord");
       const dataToSave = { ...genusData };
       dataToSave.updated_at = new Date().toISOString();
-      console.log("저장할 데이터 (rankMap 없음):", dataToSave);
       saveGenusData(dataToSave, styleSet);
       return;
     }
@@ -310,65 +300,34 @@ function App() {
       return low / (arr.length > 0 ? arr.length : 1);
     };
 
-    // Add normCoord to all points before saving (rank-based)
     const dataToSave = { ...genusData };
-    console.log(
-      "A 포인트 처리 시작, 개수:",
-      dataToSave.style_sets.A.points.length
-    );
     dataToSave.style_sets.A.points = dataToSave.style_sets.A.points.map(
-      (p, idx) => {
+      (p) => {
         const nx = getRank(p.coord.x, rankMap.x);
         const ny =
           p.coord.y !== undefined ? getRank(p.coord.y, rankMap.y) : undefined;
         const nc: Coordinate = { x: nx };
         if (ny !== undefined) nc.y = ny;
         const updated = { ...p, normCoord: nc };
-        if (idx < 3) {
-          console.log(`A[${idx}] 포인트:`, {
-            원본: p.coord,
-            normCoord: nc,
-            score: p.score,
-          });
-        }
         return updated;
       }
     );
 
-    console.log(
-      "B 포인트 처리 시작, 개수:",
-      dataToSave.style_sets.B.points.length
-    );
+
     dataToSave.style_sets.B.points = dataToSave.style_sets.B.points.map(
-      (p, idx) => {
+      (p) => {
         const nx = getRank(p.coord.x, rankMap.x);
         const nz =
           p.coord.z !== undefined ? getRank(p.coord.z, rankMap.z) : undefined;
         const nc: Coordinate = { x: nx };
         if (nz !== undefined) nc.z = nz;
         const updated = { ...p, normCoord: nc };
-        if (idx < 3) {
-          console.log(`B[${idx}] 포인트:`, {
-            원본: p.coord,
-            normCoord: nc,
-            score: p.score,
-          });
-        }
         return updated;
       }
     );
 
     dataToSave.updated_at = new Date().toISOString();
-    console.log("저장할 데이터 요약:", {
-      genus: dataToSave.genus,
-      styleSet: styleSet,
-      A_points: dataToSave.style_sets[styleSet].points.length,
-      B_points: dataToSave.style_sets.B.points.length,
-      저장될_포인트들: dataToSave.style_sets[styleSet].points.slice(0, 3),
-    });
-    console.log("=== saveGenusData 호출 ===");
     saveGenusData(dataToSave, styleSet);
-    console.log("=== handleSave 완료 ===");
 
   }, [genusData, rankMap, styleSet]);
 
@@ -780,10 +739,10 @@ function App() {
         {/* Saved Points List - Absolute Overlay (Moved to end for z-index) */}
         <div
           style={{
-            position: "absolute",
-            top: "20px",
+            position: "fixed", // Changed to fixed to avoid clipping
+            top: "80px", // Adjusted top to account for header (approx 64px + 16px)
             left: "20px",
-            zIndex: 1000,
+            zIndex: 9999, // Increased z-index
             display: "flex",
             flexDirection: "column",
             gap: "10px",

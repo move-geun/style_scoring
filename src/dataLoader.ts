@@ -38,9 +38,7 @@ export function saveGenusData(
   data: GenusAttractionData,
   styleSet: StyleSetType
 ): void {
-  console.log("=== saveGenusData 시작 ===");
-  console.log("저장할 styleSet:", styleSet);
-  console.log("데이터 존재:", !!data);
+
 
   if (!data) {
     console.error("No data to save");
@@ -62,15 +60,7 @@ export function saveGenusData(
     note: p.note,
     product_ids: p.product_ids
   }));
-  console.log("저장할 포인트 개수:", pointsToSave.length);
-  console.log(
-    "저장할 포인트 샘플 (처음 3개):",
-    pointsToSave.slice(0, 3).map((p) => ({
-      coord: p.coord,
-      score: p.score,
-      note: p.note,
-    }))
-  );
+
 
   const simplifiedData: SimplifiedSaveData = {
     genus: data.genus,
@@ -91,8 +81,7 @@ export function saveGenusData(
   const filename = `${safeGenus}_${styleSet}_${timestamp}.json`;
   a.href = url;
   a.download = filename;
-  console.log("다운로드 파일명:", filename);
-  console.log("JSON 크기:", jsonStr.length, "bytes");
+
   document.body.appendChild(a);
   a.click();
 
@@ -100,7 +89,7 @@ export function saveGenusData(
   setTimeout(() => {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    console.log("=== saveGenusData 완료 ===");
+
   }, 100);
 }
 

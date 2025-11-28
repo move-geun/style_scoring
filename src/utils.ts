@@ -249,13 +249,13 @@ export function recommendStyles(
   styleSet: StyleSetType,
   maxRank: number = 5
 ): RankGroup[] {
-  console.log("recommendStyles called:", { queryCoord, stylesLength: styles.length, styleSet, maxRank });
+
 
   const axes: ("x" | "y" | "z")[] = styleSet === "A" ? ["x", "y"] : ["x", "z"];
 
   // 유클리드 거리 계산 (0에 가까울수록 유사) - using normalized coordinates
   const filtered = styles.filter((s) => s.display === true);
-  console.log("Filtered styles (display=true):", filtered.length);
+
 
   const ranked: RankedStyle[] = filtered
     .map((style) => {
@@ -269,7 +269,7 @@ export function recommendStyles(
     })
     .sort((a, b) => a.distance - b.distance);
 
-  console.log("Ranked styles (first 5):", ranked.slice(0, 5).map(r => ({ id: r.style.style_id, distance: r.distance })));
+
 
   // 동일 거리(유사도) 그룹으로 묶기 (소수 5자리까지 비교)
   const rankGroups: RankGroup[] = [];

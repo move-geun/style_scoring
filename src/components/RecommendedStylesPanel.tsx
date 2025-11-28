@@ -32,8 +32,7 @@ export const RecommendedStylesPanel = forwardRef<RecommendedStylesPanelRef, Reco
 
   // 디버깅: rankGroups 변경 감지
   useEffect(() => {
-    console.log("RecommendedStylesPanel - rankGroups updated:", rankGroups);
-    console.log("displayGroups:", displayGroups);
+
   }, [rankGroups, displayGroups]);
 
   return (
