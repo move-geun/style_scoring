@@ -107,9 +107,9 @@ export function calculateRankBasedNormalization(
   const sortedY = styleSet === "A"
     ? yValues.filter(v => v !== -1).sort((a, b) => a - b)
     : [...yValues].sort((a, b) => a - b);
-  // For B type, exclude -1 values from z ranking
+  // For B type, exclude -1 values and values smaller than 10^-4 from z ranking
   const sortedZ = styleSet === "B"
-    ? zValues.filter(v => v !== -1).sort((a, b) => a - b)
+    ? zValues.filter(v => v !== -1 && v >= 0.0001).sort((a, b) => a - b)
     : [...zValues].sort((a, b) => a - b);
 
   // Helper to find rank (0-1)
@@ -253,17 +253,25 @@ export function recommendStyles(
 
   const axes: ("x" | "y" | "z")[] = styleSet === "A" ? ["x", "y"] : ["x", "z"];
 
-  // 유클리드 거리 계산 (0에 가까울수록 유사) - using normalized coordinates
-  const filtered = styles.filter((s) => s.display === true);
-
+  // 필터링: display === true이고, normCoord가 있고, y/z가 유효한 스타일만
+  const filtered = styles.filter((s) => {
+    if (s.display !== true) return false;
+    
+    const normCoord = (s as any).normCoord as Coordinate | undefined;
+    if (!normCoord) return false;
+    
+    // Type A: normCoord.y가 있어야 함
+    if (styleSet === "A" && normCoord.y === undefined) return false;
+    
+    // Type B: normCoord.z가 있어야 함
+    if (styleSet === "B" && normCoord.z === undefined) return false;
+    
+    return true;
+  });
 
   const ranked: RankedStyle[] = filtered
     .map((style) => {
-      const normCoord = (style as any).normCoord as Coordinate | undefined;
-      if (!normCoord) {
-        console.warn("Style missing normCoord:", style.style_id);
-        return { style, distance: Infinity, rank: 0 };
-      }
+      const normCoord = (style as any).normCoord as Coordinate;
       const distance = euclideanDistance(queryCoord, normCoord, axes);
       return { style, distance, rank: 0 };
     })

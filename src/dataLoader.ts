@@ -53,9 +53,10 @@ export function saveGenusData(
     .replace("T", "_")
     .slice(0, -5); // Format: YYYYMMDD_HHmmss
 
-  // Clean up points data to remove unnecessary properties (like normCoord or D3 internal props)
+  // Clean up points data to remove unnecessary properties (like D3 internal props)
   const pointsToSave = data.style_sets[styleSet].points.map(p => ({
     coord: p.coord,
+    normCoord: p.normCoord,
     score: p.score,
     note: p.note,
     product_ids: p.product_ids
