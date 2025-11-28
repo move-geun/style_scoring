@@ -1,0 +1,118 @@
+.saved-points-list {
+    max-width: 280px;
+}
+
+.saved-points-header {
+    padding: 0.5rem 0.75rem;
+    background: rgba(243, 244, 246, 0.95);
+    backdrop-filter: blur(4px);
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.saved-points-header:hover {
+    background: rgba(229, 231, 235, 0.95);
+    border-color: #9ca3af;
+}
+
+.saved-points-header h3 {
+    margin: 0;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #374151;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dropdown-icon {
+    font-size: 0.7rem;
+    color: #6b7280;
+}
+
+.saved-points-container {
+    margin-top: 0.5rem;
+    max-height: 300px;
+    overflow-y: auto;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(4px);
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.empty-message {
+    padding: 2rem 1rem;
+    text-align: center;
+    color: #9ca3af;
+    font-size: 0.875rem;
+}
+
+.points-list {
+    padding: 0.5rem;
+}
+
+.point-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    margin-bottom: 0.5rem;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.point-item:hover {
+    background: #fef3c7;
+    border-color: #f59e0b;
+    transform: translateX(2px);
+}
+
+.point-item.selected {
+    background: #dbeafe;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+
+.point-number {
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #6366f1;
+    color: white;
+    border-radius: 50%;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-right: 0.75rem;
+}
+
+.point-item.selected .point-number {
+    background: #2563eb;
+}
+
+.point-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.point-coord {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #1f2937;
+    margin-bottom: 0.25rem;
+    font-family: 'Courier New', monospace;
+}
+
+.point-score {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
