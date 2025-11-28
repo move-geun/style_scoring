@@ -744,14 +744,7 @@ function App() {
                 onCoordinateClick={handleCoordinateClick}
                 onContourHover={setHoveredRankGroup}
                 isScoreViewMode={isScoreViewMode}
-                onResetSelection={() => {
-                  setSelectedCoord(null);
-                  setSelectedNormCoord(null);
-                  setSelectedPointIndex(null);
-                  setRankGroups([]);
-                  setCurrentScore(0);
-                  setCurrentNote("");
-                }}
+
               />
             );
           })()}

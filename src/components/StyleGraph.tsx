@@ -12,7 +12,6 @@ interface StyleGraphProps {
   hoveredPointCoord: Coordinate | null;
   onCoordinateClick: (normCoord: Coordinate, originalCoord?: Coordinate, index?: number) => void;
   onContourHover?: (rankGroup: RankGroup | null) => void;
-  onResetSelection?: () => void;
   isScoreViewMode?: boolean;
 }
 
@@ -25,7 +24,6 @@ export const StyleGraph: React.FC<StyleGraphProps> = ({
   hoveredPointCoord,
   onCoordinateClick,
   onContourHover,
-  onResetSelection,
   isScoreViewMode = false,
 }) => {
   const svgRef = useRef<SVGSVGElement>(null);
