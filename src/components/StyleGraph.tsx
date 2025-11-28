@@ -516,26 +516,49 @@ export const StyleGraph: React.FC<StyleGraphProps> = ({
       const x = xScaleOriginal.invert(localX);
       const y = yScaleOriginal.invert(localY);
 
-      const clickThreshold = 20 / currentTransformRef.current.k; // 20px threshold in screen coordinates
-      let closestPointIndex = -1;
+      const k = currentTransformRef.current.k;
+      // Exact visual radius calculation used in rendering
+      // normalRadius = Math.min(Math.max(6 / k, 0.008), 10 / k);
+      // We use the slightly larger 'hover' radius logic for better usability if it's close, 
+      // or strictly the normal radius if the user wants "exact".
+      // User said "exact red circle size", which is normalRadius (unless hovered).
+      // Let's use the maximum possible radius for that point (hover radius) to be safe/friendly, 
+      // or strictly normalRadius if they really mean "exact". 
+      // Given "exact", I will use the normalRadius formula, but maybe add a tiny epsilon or just use it.
+      // Actually, let's calculate the distance for each point and see if it falls within THAT point's radius.
+
+      let clickedPointIndex = -1;
       let minDistance = Infinity;
 
+      // Check for clicks on points first
       points.forEach((p, i) => {
         const normCoord = (p as any).normCoord as Coordinate || p.coord;
         const px = xScaleOriginal(normCoord.x);
         const py = yScaleOriginal(styleSet === "A" ? (normCoord.y ?? 0) : (normCoord.z ?? 0));
 
+        // Calculate exact radius for this point
+        const isHovered = hoveredPointCoord && keyOf(p.coord) === keyOf(hoveredPointCoord);
+        // Use the same formula as rendering
+        const radius = isHovered
+          ? Math.min(Math.max(8 / k, 0.012), 14 / k)
+          : Math.min(Math.max(6 / k, 0.008), 10 / k);
+
         const dist = Math.hypot(px - localX, py - localY);
-        if (dist < minDistance) {
-          minDistance = dist;
-          closestPointIndex = i;
+
+        // Check if click is within the radius
+        if (dist <= radius) {
+          // If overlapping, pick the one closest to center
+          if (dist < minDistance) {
+            minDistance = dist;
+            clickedPointIndex = i;
+          }
         }
       });
 
-      if (closestPointIndex !== -1 && minDistance <= clickThreshold) {
-        const p = points[closestPointIndex];
+      if (clickedPointIndex !== -1) {
+        const p = points[clickedPointIndex];
         const normCoord = (p as any).normCoord as Coordinate || p.coord;
-        onCoordinateClick(normCoord, p.coord, closestPointIndex);
+        onCoordinateClick(normCoord, p.coord, clickedPointIndex);
         return;
       }
 

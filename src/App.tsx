@@ -652,48 +652,6 @@ function App() {
       </header>
 
       <div className="app-body">
-        {/* Saved Points List - Absolute Overlay */}
-        <div
-          style={{
-            position: "absolute",
-            top: "20px",
-            left: "20px",
-            zIndex: 1000,
-            display: "flex",
-            flexDirection: "column",
-            gap: "10px",
-          }}
-        >
-          <div style={{
-            backgroundColor: "#1f1f1f",
-            padding: "8px 12px",
-            borderRadius: "8px",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.5)",
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-            border: "1px solid rgba(255,255,255,0.1)"
-          }}>
-            <label className="switch">
-              <input
-                type="checkbox"
-                checked={isScoreViewMode}
-                onChange={(e) => setIsScoreViewMode(e.target.checked)}
-              />
-              <span className="slider round"></span>
-            </label>
-            <span style={{ fontSize: "14px", fontWeight: "600", color: "#e5e5e5" }}>Score View</span>
-          </div>
-
-          <SavedPointsList
-            points={genusData.style_sets[styleSet].points}
-            styleSet={styleSet}
-            selectedCoord={selectedCoord}
-            onPointSelect={handlePointSelect}
-            onPointHover={handlePointHover}
-          />
-        </div>
-
         <div className="graph-container">
           {(() => {
             const getRank = (val: number, arr: number[]) => {
@@ -817,6 +775,48 @@ function App() {
               />
             </div>
           </div>
+        </div>
+
+        {/* Saved Points List - Absolute Overlay (Moved to end for z-index) */}
+        <div
+          style={{
+            position: "absolute",
+            top: "20px",
+            left: "20px",
+            zIndex: 1000,
+            display: "flex",
+            flexDirection: "column",
+            gap: "10px",
+          }}
+        >
+          <div style={{
+            backgroundColor: "#1f1f1f",
+            padding: "8px 12px",
+            borderRadius: "8px",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.5)",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            border: "1px solid rgba(255,255,255,0.1)"
+          }}>
+            <label className="switch">
+              <input
+                type="checkbox"
+                checked={isScoreViewMode}
+                onChange={(e) => setIsScoreViewMode(e.target.checked)}
+              />
+              <span className="slider round"></span>
+            </label>
+            <span style={{ fontSize: "14px", fontWeight: "600", color: "#e5e5e5" }}>Score View</span>
+          </div>
+
+          <SavedPointsList
+            points={genusData.style_sets[styleSet].points}
+            styleSet={styleSet}
+            selectedCoord={selectedCoord}
+            onPointSelect={handlePointSelect}
+            onPointHover={handlePointHover}
+          />
         </div>
       </div>
     </div>
