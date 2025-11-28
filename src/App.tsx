@@ -27,7 +27,7 @@ import {
   RecommendedStylesPanel,
   type RecommendedStylesPanelRef,
 } from "./components/RecommendedStylesPanel";
-import { ScoreInputPanel } from "./components/ScoreInputPanel";
+import { ScoreInputPanel, type ScoreInputPanelRef } from "./components/ScoreInputPanel";
 import { SavedPointsList } from "./components/SavedPointsList";
 import "./App.css";
 
@@ -72,6 +72,7 @@ function App() {
     null
   );
   const recommendedPanelRef = React.useRef<RecommendedStylesPanelRef>(null);
+  const scoreInputPanelRef = React.useRef<ScoreInputPanelRef>(null);
 
   // Normalization state: rankMap and normalized styles
   const [rankMap, setRankMap] = useState<RankMap | null>(null);
@@ -472,6 +473,11 @@ function App() {
 
           handleCoordinateClick(nc, coord, index);
         }
+
+        // Auto-focus score input after state updates
+        setTimeout(() => {
+          scoreInputPanelRef.current?.focusScoreInput();
+        }, 0);
       } else {
         // Fallback to old logic if index is not provided
         if (normCoord) {
@@ -712,6 +718,7 @@ function App() {
                 <span>📝</span> 점수 입력
               </div>
               <ScoreInputPanel
+                ref={scoreInputPanelRef}
                 coord={selectedCoord}
                 existingScore={
                   selectedPointIndex !== null &&

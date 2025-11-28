@@ -72,8 +72,7 @@ export function saveGenusData(
   };
 
   const jsonStr = JSON.stringify(simplifiedData, null, 2);
-  // Use text/plain to avoid browser handling issues with application/json
-  const blob = new Blob([jsonStr], { type: "text/plain;charset=utf-8" });
+  const blob = new Blob([jsonStr], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   // Sanitize filename

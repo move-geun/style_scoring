@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useImperativeHandle, forwardRef } from "react";
 import type { Coordinate } from "../types.ts";
 
 interface ScoreInputPanelProps {
@@ -11,7 +11,11 @@ interface ScoreInputPanelProps {
   onDelete?: () => void;
 }
 
-export const ScoreInputPanel: React.FC<ScoreInputPanelProps> = ({
+export interface ScoreInputPanelRef {
+  focusScoreInput: () => void;
+}
+
+export const ScoreInputPanel = forwardRef<ScoreInputPanelRef, ScoreInputPanelProps>(({
   coord,
   existingScore,
   note,
@@ -19,12 +23,21 @@ export const ScoreInputPanel: React.FC<ScoreInputPanelProps> = ({
   onNoteChange,
   onSave,
   onDelete,
-}) => {
+}, ref) => {
   const [score, setScore] = useState<number>(existingScore ?? 0);
+  const scoreInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setScore(existingScore ?? 0);
   }, [existingScore, coord]);
+
+  // Expose focus method to parent
+  useImperativeHandle(ref, () => ({
+    focusScoreInput: () => {
+      scoreInputRef.current?.focus();
+      scoreInputRef.current?.select();
+    }
+  }));
 
   if (!coord) {
     return (
@@ -61,6 +74,7 @@ export const ScoreInputPanel: React.FC<ScoreInputPanelProps> = ({
         <div className="score-input-inline">
           <label className="score-label-inline">매력도</label>
           <input
+            ref={scoreInputRef}
             type="text"
             value={score}
             onChange={(e) => {
@@ -72,6 +86,12 @@ export const ScoreInputPanel: React.FC<ScoreInputPanelProps> = ({
                 const numValue = value === "" ? 0 : parseInt(value, 10);
                 setScore(numValue);
                 onScoreChange(numValue);
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                onSave();
               }
             }}
             className="score-input-inline-field"
@@ -303,4 +323,4 @@ export const ScoreInputPanel: React.FC<ScoreInputPanelProps> = ({
       `}</style>
     </div>
   );
-};
+});
