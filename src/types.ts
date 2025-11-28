@@ -38,6 +38,7 @@ export interface AttractionPoint {
   score: number;
   note: string;
   product_ids?: number[]; // style_ids of rank 1 recommended styles
+  isEdited?: boolean; // true if point has been modified after initial creation
 }
 
 export interface StyleSetData {

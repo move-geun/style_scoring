@@ -245,6 +245,7 @@ function App() {
         score: currentScore,
         note: currentNote,
         product_ids: product_ids,
+        isEdited: true, // Mark as edited
         // Preserve coord and normCoord
       };
       newData.updated_at = new Date().toISOString();

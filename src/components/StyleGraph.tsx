@@ -721,8 +721,13 @@ export const StyleGraph: React.FC<StyleGraphProps> = ({
       const normalRadius = Math.min(Math.max(6 / currentTransform.k, 0.008), 10 / currentTransform.k);
       const hoverRadius = Math.min(Math.max(8 / currentTransform.k, 0.012), 14 / currentTransform.k);
 
-      let pointFill = isHovered ? "#f59e0b" : "#ef4444";
-      let pointStroke = isHovered ? "#d97706" : "#dc2626";
+      // Determine base color based on edit status
+      const isEditedPoint = (p as any).isEdited === true;
+      const baseColor = isEditedPoint ? "#22c55e" : "#ef4444"; // Green for edited, red for new
+      const baseStroke = isEditedPoint ? "#16a34a" : "#dc2626"; // Darker green/red for stroke
+
+      let pointFill = isHovered ? "#f59e0b" : baseColor;
+      let pointStroke = isHovered ? "#d97706" : baseStroke;
       let scoreColor = "";
 
       // Helper for score color (Rainbow: 100=Red -> 0=Violet)
