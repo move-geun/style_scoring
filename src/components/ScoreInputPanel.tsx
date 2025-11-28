@@ -93,14 +93,14 @@ export const ScoreInputPanel: React.FC<ScoreInputPanelProps> = ({
       </div>
 
       <div className="button-group">
-        <button onClick={onSave} className="save-button">
-          <span>{existingScore !== null ? "✏️ 수정" : "💾 저장"}</span>
-        </button>
         {existingScore !== null && onDelete && (
           <button onClick={onDelete} className="delete-button">
             <span>🗑️ 삭제</span>
           </button>
         )}
+        <button onClick={onSave} className="save-button">
+          <span>{existingScore !== null ? "✏️ 수정" : "💾 저장"}</span>
+        </button>
       </div>
 
       <style>{`
