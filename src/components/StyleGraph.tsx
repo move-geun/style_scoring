@@ -555,7 +555,7 @@ export const StyleGraph: React.FC<StyleGraphProps> = ({
     drawAxes(xScaleOriginal, yScaleOriginal);
     updateOverlays(xScaleOriginal, yScaleOriginal);
 
-  }, [dimensions, styleSet, styles, isScoreViewMode, points]); // Only re-run when dimensions or styleSet/styles/points change
+  }, [dimensions, styleSet, styles, points]); // isScoreViewMode removed to preserve zoom state
 
   // 2. Content Effect: Draw dynamic content (Contours, Markers, Saved Points)
   useEffect(() => {
@@ -765,20 +765,19 @@ export const StyleGraph: React.FC<StyleGraphProps> = ({
       }
     });
 
-    // Auto-zoom when rankGroups change (only if selectedCoord exists)
-    if (selectedCoord && rankGroups.length > 0 && zoomRef.current) {
-      // This part needs to be careful not to conflict with user interactions
-      // We only want to auto-zoom on NEW selection, not just any render
-      // But since selectedCoord changes on new selection, this is fine.
-      // However, we should probably check if we are already zoomed?
-      // For now, keep original logic but be aware it runs on every render if dependencies change.
-      // Actually, we should probably move this to a separate effect or keep it here.
-      // Original logic:
+  }, [points, rankGroups, selectedCoord, hoveredPointCoord, styleSet, dimensions, isScoreViewMode]); // Content dependencies
+
+  // Auto-zoom to selected coordinate when rankGroups change (DISABLED)
+  /*
+  useEffect(() => {
+    if (selectedCoord && rankGroups.length > 0 && zoomRef.current && svgRef.current && xScaleOriginalRef.current && yScaleOriginalRef.current) {
       const normSelectedCoord = selectedCoord;
       const maxDistance = Math.max(...rankGroups.map(g => g.distance));
       if (maxDistance > 0) {
-        const width = dimensions.width - 80; // approx
+        const width = dimensions.width - 80;
         const height = dimensions.height - 80;
+        const xScaleOriginal = xScaleOriginalRef.current;
+        const yScaleOriginal = yScaleOriginalRef.current;
         const baseRadiusPx = xScaleOriginal(maxDistance) - xScaleOriginal(0);
         const targetRadiusPx = Math.min(width, height) / 2.5;
         let targetK = targetRadiusPx / baseRadiusPx;
@@ -786,25 +785,18 @@ export const StyleGraph: React.FC<StyleGraphProps> = ({
 
         const centerX = xScaleOriginal(normSelectedCoord.x);
         const centerY = yScaleOriginal(styleSet === "A" ? (normSelectedCoord.y ?? 0) : (normSelectedCoord.z ?? 0));
-        const tx = dimensions.width / 2 - centerX * targetK; // Using full width for center
+        const tx = dimensions.width / 2 - centerX * targetK;
         const ty = dimensions.height / 2 - centerY * targetK;
-
-        // Only zoom if we are not already close to that state? 
-        // Or just let it happen. It's a transition.
-        // NOTE: If this effect runs on Reset (selectedCoord becomes null), this block is skipped.
-        // So Reset animation works.
-
-        // One issue: if we click a point, selectedCoord changes -> Effect runs -> Zoom happens.
-        // This is desired.
 
         const newTransform = d3.zoomIdentity.translate(tx, ty).scale(targetK);
         d3.select(svgRef.current).transition().duration(750).call(zoomRef.current.transform as any, newTransform);
       }
     }
+  }, [selectedCoord, rankGroups, styleSet, dimensions]); // Only zoom when selection or rank groups change
+  */
 
-  }, [points, rankGroups, selectedCoord, hoveredPointCoord, styleSet, dimensions, isScoreViewMode]); // Content dependencies
-
-  // Zoom to hovered point
+  // Zoom to hovered point (DISABLED)
+  /*
   useEffect(() => {
     if (hoveredPointCoord && zoomRef.current && svgRef.current && scalesRef.current) {
       const x = hoveredPointCoord.x;
@@ -830,6 +822,7 @@ export const StyleGraph: React.FC<StyleGraphProps> = ({
         );
     }
   }, [hoveredPointCoord, styleSet, dimensions]);
+  */
 
   const handleZoomIn = () => {
     if (!svgRef.current || !zoomRef.current) return;
