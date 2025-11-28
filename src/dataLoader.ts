@@ -151,13 +151,13 @@ export function createEmptyGenusData(genus: string): GenusAttractionData {
     style_sets: {
       A: {
         axes: ["x", "y"],
-        heatingScoreMin: null,
+        heatingScoreMin: 680,
         heatingScoreMax: null,
         points: [],
       },
       B: {
         axes: ["x", "z"],
-        heatingScoreMin: null,
+        heatingScoreMin: 680,
         heatingScoreMax: null,
         points: [],
       },

@@ -39,7 +39,7 @@ const GENUS_OPTIONS = Array.from(
 function App() {
   const [masterStyles, setMasterStyles] = useState<StyleMaster[]>([]);
   const [genus, setGenus] = useState<string>(GENUS_OPTIONS[0]);
-  const [heatingScoreMin, setHeatingScoreMin] = useState<number | null>(null);
+  const [heatingScoreMin, setHeatingScoreMin] = useState<number | null>(680);
   const [heatingScoreMax, setHeatingScoreMax] = useState<number | null>(null);
   const [styleSet, setStyleSet] = useState<StyleSetType>("A");
   const [genusDataMap, setGenusDataMap] = useState<Map<string, GenusAttractionData>>(() => {
