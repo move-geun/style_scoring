@@ -1,5 +1,5 @@
-import React, { useRef, useEffect, forwardRef, useImperativeHandle } from "react";
-import type { RankGroup, StyleMaster } from "../types.ts";
+import { useRef, useEffect, forwardRef, useImperativeHandle } from "react";
+import type { RankGroup } from "../types.ts";
 
 interface RecommendedStylesPanelProps {
   rankGroups: RankGroup[];

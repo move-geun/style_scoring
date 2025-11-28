@@ -883,9 +883,6 @@ export const StyleGraph: React.FC<StyleGraphProps> = ({
     svg.transition()
       .duration(300)
       .call(zoomRef.current.transform as any, d3.zoomIdentity);
-
-    // Reset selection if handler is provided
-    onResetSelection?.();
   };
 
   return (

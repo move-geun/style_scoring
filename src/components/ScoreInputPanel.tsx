@@ -8,6 +8,7 @@ interface ScoreInputPanelProps {
   onScoreChange: (score: number) => void;
   onNoteChange: (note: string) => void;
   onSave: () => void;
+  onDelete?: () => void;
 }
 
 export const ScoreInputPanel: React.FC<ScoreInputPanelProps> = ({
@@ -17,6 +18,7 @@ export const ScoreInputPanel: React.FC<ScoreInputPanelProps> = ({
   onScoreChange,
   onNoteChange,
   onSave,
+  onDelete,
 }) => {
   const [score, setScore] = useState<number>(existingScore ?? 0);
 
@@ -90,9 +92,16 @@ export const ScoreInputPanel: React.FC<ScoreInputPanelProps> = ({
         />
       </div>
 
-      <button onClick={onSave} className="save-button">
-        <span>{existingScore !== null ? "✏️ 수정" : "💾 저장"}</span>
-      </button>
+      <div className="button-group">
+        <button onClick={onSave} className="save-button">
+          <span>{existingScore !== null ? "✏️ 수정" : "💾 저장"}</span>
+        </button>
+        {existingScore !== null && onDelete && (
+          <button onClick={onDelete} className="delete-button">
+            <span>🗑️ 삭제</span>
+          </button>
+        )}
+      </div>
 
       <style>{`
         .score-panel-empty {
@@ -241,24 +250,51 @@ export const ScoreInputPanel: React.FC<ScoreInputPanelProps> = ({
           color: #6b7280;
         }
         
+        .button-group {
+          display: flex;
+          gap: 8px;
+        }
+
         .save-button {
+          flex: 1;
           width: 100%;
-          padding: 10px 16px;
+          padding: 12px;
           background: #3b82f6;
           color: white;
           border: none;
           border-radius: 6px;
-          font-size: 13px;
           font-weight: 600;
           cursor: pointer;
-          transition: all 0.2s;
-          box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+          transition: background 0.2s;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
         }
         
         .save-button:hover {
           background: #2563eb;
-          transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+
+        .delete-button {
+          flex: 1;
+          width: 100%;
+          padding: 12px;
+          background: #ef4444;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: background 0.2s;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 6px;
+        }
+
+        .delete-button:hover {
+          background: #dc2626;
         }
         
         .save-button:active {

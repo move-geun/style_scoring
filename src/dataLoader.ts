@@ -1,12 +1,12 @@
 import type {
   StyleMaster,
   GenusAttractionData,
-  StyleSetData,
+
   AttractionPoint,
   Coordinate,
   StyleSetType,
 } from "./types.ts";
-import { keyOf, parseKey } from "./utils";
+import { keyOf } from "./utils";
 
 // Simplified save format for single style set
 interface SimplifiedSaveData {
@@ -108,7 +108,7 @@ export function saveGenusData(
 export function loadGenusData(
   file: File,
   currentData: GenusAttractionData,
-  styleSet: StyleSetType
+  _styleSet: StyleSetType
 ): Promise<GenusAttractionData> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -183,9 +183,9 @@ export function upsertPoint(
   coord: Coordinate,
   score: number,
   note: string = "",
-  product_ids?: number[]
+  product_ids: number[] = []
 ): void {
-  const styleSetData = data.style_sets[styleSet];
+  const styleSetData = data.style_sets[styleSet]; // Use the renamed parameter
   const key = keyOf(coord);
   const existingIndex = styleSetData.points.findIndex(
     (p) => keyOf(p.coord) === key
@@ -198,11 +198,29 @@ export function upsertPoint(
     product_ids,
   };
 
-  if (existingIndex >= 0) {
+  if (existingIndex !== -1) {
     styleSetData.points[existingIndex] = newPoint;
   } else {
     styleSetData.points.push(newPoint);
   }
 
+  data.updated_at = new Date().toISOString();
+}
+
+// 좌표의 점수 삭제
+export function deletePoint(
+  data: GenusAttractionData,
+  styleSet: StyleSetType,
+  coord: Coordinate
+): void {
+  const styleSetData = data.style_sets[styleSet];
+  const key = keyOf(coord);
+  const existingIndex = styleSetData.points.findIndex(
+    (p) => keyOf(p.coord) === key
+  );
+
+  if (existingIndex !== -1) {
+    styleSetData.points.splice(existingIndex, 1);
+  }
   data.updated_at = new Date().toISOString();
 }

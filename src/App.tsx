@@ -13,6 +13,7 @@ import {
   loadGenusData,
   createEmptyGenusData,
   upsertPoint,
+  deletePoint,
 } from "./dataLoader";
 import {
   keyOf,
@@ -230,6 +231,15 @@ function App() {
     } else {
       // New point or fallback
       upsertPoint(newData, styleSet, selectedCoord, currentScore, currentNote, product_ids);
+
+      // Find the index of the newly added point to switch to edit mode
+      const key = keyOf(selectedCoord);
+      const newIndex = newData.style_sets[styleSet].points.findIndex(
+        (p) => keyOf(p.coord) === key
+      );
+      if (newIndex !== -1) {
+        setSelectedPointIndex(newIndex);
+      }
     }
 
     newData.style_sets[styleSet].heatingScoreMin = heatingScoreMin;
@@ -340,7 +350,24 @@ function App() {
     console.log("=== saveGenusData 호출 ===");
     saveGenusData(dataToSave, styleSet);
     console.log("=== handleSave 완료 ===");
+
   }, [genusData, rankMap, styleSet]);
+
+  // 포인트 삭제 핸들러
+  const handleDeletePoint = useCallback(() => {
+    if (!selectedCoord) return;
+
+    if (confirm("정말 삭제하시겠습니까?")) {
+      const newData = { ...genusData };
+      deletePoint(newData, styleSet, selectedCoord);
+      setGenusData(newData);
+
+      // 선택 초기화
+      setSelectedCoord(null);
+      setSelectedNormCoord(null);
+      setSelectedPointIndex(null);
+    }
+  }, [genusData, selectedCoord, styleSet]);
 
   // 불러오기
   // 불러오기
@@ -771,8 +798,15 @@ function App() {
                 }
                 note={currentNote}
                 onScoreChange={setCurrentScore}
-                onNoteChange={setCurrentNote}
+                onNoteChange={(note) => {
+                  if (selectedPointIndex !== null && genusData.style_sets[styleSet].points[selectedPointIndex]) {
+                    const newData = { ...genusData };
+                    newData.style_sets[styleSet].points[selectedPointIndex].note = note;
+                    setGenusData(newData);
+                  }
+                }}
                 onSave={handleSaveScore}
+                onDelete={handleDeletePoint}
               />
             </div>
           </div>
